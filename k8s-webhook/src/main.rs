@@ -31,7 +31,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
         response["response"]["allowed"] = json!(false);
         response["response"]["status"]["code"] = json!(403);
         response["response"]["status"]["message"] = json!("Invalid JSON payload");
-        return HttpResponse::BadRequest()
+        return HttpResponse::Ok()
             .set(ContentType::json())
             .body(response);
     }
@@ -43,7 +43,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
         response["response"]["status"]["code"] = json!(403);
         response["response"]["status"]["message"] = json!("Wrong API version");
 
-        return HttpResponse::BadRequest()
+        return HttpResponse::Ok()
             .set(ContentType::json())
             .body(response);
     }
