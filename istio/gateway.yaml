@@ -7,12 +7,9 @@ spec:
     istio: ingressgateway
   servers:
     - port:
-        number: 443
-        name: https-443
-        protocol: HTTPS
-      tls:
-        mode: SIMPLE
-        credentialName: "tls-secret"
+        number: 80
+        name: https-80
+        protocol: HTTP
       hosts:
         - "*"
 ---
