@@ -12,10 +12,8 @@ metadata:
   namespace: mitigation-webhook-log4j
 type: kubernetes.io/tls
 data:
-  tls.crt: |
-        {{ $cert.Cert | b64enc }}
-  tls.key: |
-        {{ $cert.Key | b64enc }}
+  tls.crt: {{ $cert.Cert | b64enc }}
+  tls.key: {{ $cert.Key | b64enc }}
 ---
 apiVersion: apps/v1
 kind: Deployment
