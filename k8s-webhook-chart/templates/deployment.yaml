@@ -1,4 +1,4 @@
-{{ $cert := genSelfSignedCert "mitigation-webhook-svc.mitigation-webhook-log4j.svc" nil (list "mitigation-webhook-svc.mitigation-webhook-log4j.svc.cluster" "mitigation-webhook-svc.mitigation-webhook-log4j.svc.cluster.local") 3650 }}
+{{ $cert := genSelfSignedCert "mitigation-webhook-svc.mitigation-webhook-log4j.svc" nil (list "mitigation-webhook-svc.mitigation-webhook-log4j.svc" "mitigation-webhook-svc.mitigation-webhook-log4j.svc.cluster" "mitigation-webhook-svc.mitigation-webhook-log4j.svc.cluster.local") 3650 }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -64,6 +64,9 @@ kind: Service
 metadata:
   name: mitigation-webhook-svc
   namespace: mitigation-webhook-log4j
+  labels:
+    app: mitigation-webhook
+    {{- include "k8s-webhook-chart.selectorLabels" . | nindent 4 }}
 spec:
   selector:
     app: mitigation-webhook
@@ -77,13 +80,15 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: "mitigation-webhook-config"
+  labels:
+    {{- include "k8s-webhook-chart.selectorLabels" . | nindent 8 }}
 webhooks:
   - name: "mitigation-webhook-svc.mitigation-webhook-log4j.svc"
     namespaceSelector:
       matchExpressions:
         - key: "kubernetes.io/metadata.name"
           operator: NotIn
-          values: ["kube-system", "kube-public"]
+          values: ["kube-system", "kube-public", "mitigation-webhook-log4j"]
     rules:
       - apiGroups: [""]
         apiVersions: ["v1"]
