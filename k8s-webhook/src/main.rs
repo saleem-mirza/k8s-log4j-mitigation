@@ -31,9 +31,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
         response["response"]["allowed"] = json!(false);
         response["response"]["status"]["code"] = json!(403);
         response["response"]["status"]["message"] = json!("Invalid JSON payload");
-        return HttpResponse::Ok()
-            .set(ContentType::json())
-            .body(response);
+        return HttpResponse::Ok().set(ContentType::json()).body(response);
     }
 
     if request["apiVersion"] != "admission.k8s.io/v1"
@@ -43,9 +41,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
         response["response"]["status"]["code"] = json!(403);
         response["response"]["status"]["message"] = json!("Wrong API version");
 
-        return HttpResponse::Ok()
-            .set(ContentType::json())
-            .body(response);
+        return HttpResponse::Ok().set(ContentType::json()).body(response);
     }
 
     if request["request"]["kind"]["group"] == ""
@@ -110,14 +106,14 @@ async fn main() -> std::io::Result<()> {
         .version("1.0.0")
         .author("Muhammad Saleem Mirza")
         .arg(
-            Arg::with_name("cert")
+            Arg::new("cert")
                 .long("cert")
                 .takes_value(true)
                 .default_value("tls.crt")
                 .help("set tls certificate path"),
         )
         .arg(
-            Arg::with_name("key")
+            Arg::new("key")
                 .long("key")
                 .takes_value(true)
                 .default_value("tls.key")
