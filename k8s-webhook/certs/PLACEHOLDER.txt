@@ -1,1 +1,10 @@
-placeholder for self signed tls key pair.
+# Placeholder for self signed tls key pair.
+
+# ------------------------------------------
+# Generate TLS certs using openssl
+# ------------------------------------------
+
+openssl req -nodes -new -x509 -days 365 -newkey rsa:2048 \
+-keyout tls.key -out tls.crt \
+-subj "/CN=mitigation-webhook-svc.mitigation-webhook-log4j.svc" \
+-addext "subjectAltName=DNS:mitigation-webhook-svc.mitigation-webhook-log4j.svc"
