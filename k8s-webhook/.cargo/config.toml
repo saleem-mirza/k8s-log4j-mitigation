@@ -1,2 +1,2 @@
 [build]
-rustflags = ["-Cstrip=symbols", "-Ctarget-feature=+sse3"]
+rustflags = ["-Cstrip=symbols", "-Ctarget-feature=+sse3", "-Clink-arg=-fuse-ld=lld"]

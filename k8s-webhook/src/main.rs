@@ -27,7 +27,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
         }
     });
 
-    if &request == &Value::Null {
+    if request == Value::Null {
         response["response"]["allowed"] = json!(false);
         response["response"]["status"]["code"] = json!(403);
         response["response"]["status"]["message"] = json!("Invalid JSON payload");
@@ -55,7 +55,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
             .as_array()
             .unwrap();
 
-        for i in 0..request_containers.len() {
+        for (i, _) in request_containers.iter().enumerate() {
             match request_containers[i].get("env") {
                 None => {
                     containers.push(json!({
@@ -68,7 +68,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
                     let mut found = false;
                     let env_array = env.as_array().unwrap();
 
-                    for j in 0..env_array.len() {
+                    for (j, _) in env_array.iter().enumerate() {
                         if env_array[j]["name"] == json!("LOG4J_FORMAT_MSG_NO_LOOKUPS") {
                             containers.push(json!({
                                 "op": "replace",
@@ -80,7 +80,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
                         }
                     }
 
-                    if found == false {
+                    if !found {
                         containers.push(json!({
                             "op": "add",
                             "path": format!("/spec/containers/{}/env/0", i),
@@ -124,12 +124,18 @@ async fn main() -> std::io::Result<()> {
     println!("Initializing certificates...");
 
     let mut ctx = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-    if let Err(_) = ctx.set_private_key_file(matches.value_of("key").unwrap(), SslFiletype::PEM) {
+    if ctx
+        .set_private_key_file(matches.value_of("key").unwrap(), SslFiletype::PEM)
+        .is_err()
+    {
         eprintln!("\nInvalid tls certificate key... terminating");
         exit(0);
     }
 
-    if let Err(_) = ctx.set_certificate_chain_file(matches.value_of("cert").unwrap()) {
+    if ctx
+        .set_certificate_chain_file(matches.value_of("cert").unwrap())
+        .is_err()
+    {
         eprintln!("\nInvalid tls certificate... terminating");
         exit(0);
     }
