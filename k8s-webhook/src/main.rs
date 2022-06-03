@@ -20,7 +20,7 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
             "patch": "",
             "patchType": "JSONPatch",
             "status": {
-                "code": 200,
+                "code": 200u16,
                 "message": ""
             },
             "warnings":[]
@@ -29,19 +29,19 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
 
     if request == Value::Null {
         response["response"]["allowed"] = json!(false);
-        response["response"]["status"]["code"] = json!(403);
+        response["response"]["status"]["code"] = json!(403u16);
         response["response"]["status"]["message"] = json!("Invalid JSON payload");
-        return HttpResponse::Ok().set(ContentType::json()).body(response);
+        return HttpResponse::Ok().content_type(ContentType::json()).body(response.to_string());
     }
 
     if request["apiVersion"] != "admission.k8s.io/v1"
         && request["apiVersion"] != "admission.k8s.io/v1beta1"
     {
         response["response"]["allowed"] = json!(false);
-        response["response"]["status"]["code"] = json!(403);
+        response["response"]["status"]["code"] = json!(403u16);
         response["response"]["status"]["message"] = json!("Wrong API version");
 
-        return HttpResponse::Ok().set(ContentType::json()).body(response);
+        return HttpResponse::Ok().content_type(ContentType::json()).body(response.to_string());
     }
 
     if request["request"]["kind"]["group"] == ""
@@ -96,13 +96,13 @@ async fn webhook(data: web::Bytes) -> HttpResponse {
     }
 
     HttpResponse::Ok()
-        .set(ContentType::json())
+        .content_type(ContentType::json())
         .body(serde_json::to_vec(&response).unwrap())
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let matches = clap::App::new("log4j-mutating-webhook")
+    let matches = clap::Command::new("log4j-mutating-webhook")
         .version("1.0.0")
         .author("Muhammad Saleem Mirza")
         .arg(
